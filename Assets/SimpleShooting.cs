@@ -2,15 +2,16 @@
 
 public class SimpleShooting : MonoBehaviour
 {
-    public GameObject bulletPrefab;     // Khuôn đạn
-    public float shootingInterval = 0.2f; // Thời gian giãn cách giữa 2 viên đạn (giây)
+    public GameObject bulletPrefab;     
+    public float shootingInterval = 0.2f; 
 
-    private float lastBulletTime;       // Biến lưu thời điểm bắn viên đạn gần nhất
+    private float lastBulletTime;
+
+    public Vector3 bulletOffset;
 
     void Update()
     {
-        // Thay vì GetKeyDown (nhấn 1 lần), ta dùng GetKey (giữ phím)
-        // Bắn khi GIỮ Chuột trái (0) HOẶC GIỮ phím Space
+        // Getkey: giữ phím
         if (Input.GetMouseButton(0) || Input.GetKey(KeyCode.Space))
         {
             Shoot();
@@ -19,13 +20,12 @@ public class SimpleShooting : MonoBehaviour
 
     void Shoot()
     {
-        // Kiểm tra xem đã đủ thời gian chờ chưa (Time.time là thời gian hiện tại của game)
         if (Time.time - lastBulletTime > shootingInterval)
         {
-            // Tạo đạn
-            Instantiate(bulletPrefab, transform.position, Quaternion.identity);
+            Vector3 spawnPosition = transform.position + bulletOffset;
 
-            // Cập nhật lại thời điểm vừa bắn xong
+            Instantiate(bulletPrefab, spawnPosition, Quaternion.identity);
+
             lastBulletTime = Time.time;
         }
     }

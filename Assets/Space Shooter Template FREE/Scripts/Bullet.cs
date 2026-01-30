@@ -2,19 +2,24 @@
 
 public class Bullet : MonoBehaviour
 {
-    public float flySpeed = 10f; // Tốc độ bay (Mặc định là 10)
+    public float flySpeed = 10f;
 
-    // Hàm Update chạy liên tục mỗi khung hình
     void Update()
     {
-        // 1. Lấy vị trí hiện tại
         Vector3 newPosition = transform.position;
 
-        // 2. Tăng vị trí Y lên (Bay lên trên)
-        // Công thức: Vị trí mới = Vị trí cũ + (Tốc độ * Thời gian)
         newPosition.y += flySpeed * Time.deltaTime;
 
-        // 3. Gán lại vị trí mới cho viên đạn
         transform.position = newPosition;
+
+        void OnTriggerEnter2D(Collider2D other)
+        {
+            if (other.gameObject.CompareTag("Enemy"))
+            {
+                Destroy(other.gameObject);
+
+                Destroy(gameObject);
+            }
+        }
     }
 }
