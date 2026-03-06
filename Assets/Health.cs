@@ -7,6 +7,7 @@ public class Health : MonoBehaviour
     // --- MỚI: Khai báo biến máu ---
     public int defaultHealthPoint; // Máu gốc (Cài đặt trong Inspector)
     private int healthPoint;       // Máu hiện tại (Tính toán trong game)
+    public System.Action onDead;
 
     // Khi bắt đầu game, nạp đầy máu
     private void Start()
@@ -39,5 +40,7 @@ public class Health : MonoBehaviour
             Destroy(explosion, 1f);
         }
         Destroy(gameObject);
+
+        onDead?.Invoke();
     }
 }
