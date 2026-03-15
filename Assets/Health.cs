@@ -4,18 +4,26 @@ public class Health : MonoBehaviour
 {
     public GameObject explosionPrefab;
 
-    // --- MỚI: Khai báo biến máu ---
+    // --- Khai báo biến máu ---
     public int defaultHealthPoint; // Máu gốc (Cài đặt trong Inspector)
-    private int healthPoint;       // Máu hiện tại (Tính toán trong game)
+
+    // Đã chuyển thành public để script UI lát nữa có thể đọc được số máu này
+    public int healthPoint;        // Máu hiện tại (Tính toán trong game)
+
+    // --- Khai báo các sự kiện (Loa thông báo) ---
     public System.Action onDead;
+    public System.Action onHealthChanged; // MỚI: Sự kiện báo khi máu bị thay đổi
 
     // Khi bắt đầu game, nạp đầy máu
     private void Start()
     {
         healthPoint = defaultHealthPoint;
+
+        // Phát tín hiệu ngay khi vào game để thanh UI hiển thị đầy 100%
+        onHealthChanged?.Invoke();
     }
 
-    // --- MỚI: Hàm nhận sát thương (thay cho việc chết ngay) ---
+    // Hàm nhận sát thương 
     public void TakeDamage(int damage)
     {
         // Nếu đã chết rồi thì thôi không trừ nữa
@@ -24,6 +32,9 @@ public class Health : MonoBehaviour
         // Trừ máu
         healthPoint -= damage;
 
+        // Phát tín hiệu để thanh UI biết mà co ngắn lại
+        onHealthChanged?.Invoke();
+
         // Kiểm tra: Nếu hết máu thì mới gọi hàm Die
         if (healthPoint <= 0)
         {
@@ -31,7 +42,7 @@ public class Health : MonoBehaviour
         }
     }
 
-    // Hàm Die giữ nguyên như cũ
+    // Hàm Die 
     protected virtual void Die()
     {
         if (explosionPrefab != null)
@@ -39,8 +50,10 @@ public class Health : MonoBehaviour
             var explosion = Instantiate(explosionPrefab, transform.position, transform.rotation);
             Destroy(explosion, 1f);
         }
-        Destroy(gameObject);
 
+        // Phát sự kiện chết trước khi xóa vật thể
         onDead?.Invoke();
+
+        Destroy(gameObject);
     }
 }
